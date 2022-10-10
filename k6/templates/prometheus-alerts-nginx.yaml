@@ -1,0 +1,98 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    prometheus: ingress
+    role: alert-rules
+  name: prometheus-ingress-rules
+spec:
+  groups:
+  - name: ./ingress.rules
+    rules: 
+    ## Latency rules
+    - alert: Continuous_Load_Ingress_p99TooHigh
+      expr: sum by(namespace, pod)
+            (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=~"target.*", exported_namespace="continuous-load-target", le="0,025"}[1m])) / 
+            sum by(namespace, pod) 
+            (rate(nginx_ingress_controller_request_duration_seconds_count{ingress=~"target.*", exported_namespace="continuous-load-target"}[1m])) < 0.99 
+      for: 1m
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Percentage of requests served is under 25ms: {{`{{`}} $value | humanize {{`}}`}}
+        summary: The percentage of requests served within the p99 latency threshold is less than 99%.
+    ## Traffic rules
+    - alert: Continuous_Load_Ingress_NftTrafficTooLow
+      expr: sum by(namespace) (rate(nginx_ingress_controller_requests{exported_namespace="continuous-load-target"}[1m])) < 10
+      for: 3m
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Type: `{{`{{`}} $labels.type {{`}}`}}`
+          TPS: `{{`{{`}} $value | printf "%.0f" {{`}}`}}`
+          Expected >= 10 for 3m
+        summary: Traffic is too low in the NFT test so it might not be running correctly.
+    - alert: Continuous_Load_Ingress_NftTrafficTooHigh
+      expr: sum by(namespace) (rate(nginx_ingress_controller_requests{exported_namespace="continuous-load-target"}[1m])) > 100
+      for: 3m
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          TPS: `{{`{{`}} $value | printf "%.0f" {{`}}`}}`
+          Expected < 100 for 3m
+        summary: Traffic is too high in the NFT test so it might not be running correctly.
+    ## Error rules
+    - alert: Continuous_Load_Ingress_AppError
+      expr: sum by(namespace, pod, status) (rate(nginx_ingress_controller_requests{status!="200", exported_namespace="continuous-load-target"}[1m])) > 0.01
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          StatusCode: `{{`{{`}} $labels.status {{`}}`}}`
+          Errors: `{{`{{`}} $value {{`}}`}}`
+          Expected: 0
+        summary: Errors have been reported.
+    ## Saturation rules
+    - alert: Continuous_Load_Ingress_CpuTooHigh
+      expr: sum by(namespace, pod, container) (rate(container_cpu_usage_seconds_total{container!="istio-proxy", namespace="nginx", pod=~"nginx.*"}[1m])) -
+            sum by(namespace, pod, container) (kube_pod_container_resource_requests{container!="istio-proxy", namespace="nginx", pod=~"nginx.*", resource="cpu", unit="core"}) > 0
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Container: `{{`{{`}} $labels.container {{`}}`}}`
+          Container is using more CPU than requested, cpu burst is: `{{`{{`}} $value {{`}}`}}` cpu core
+          Please investigate
+        summary: The container is using more cpu than expected.
+    - alert: Continuous_Load_Ingress_MemoryTooHigh
+      expr: (sum by(namespace, pod, container) (container_memory_rss{ container!="istio-proxy", namespace="nginx", pod=~"nginx.*"}) /
+            sum by(namespace, pod, container) (kube_pod_container_resource_requests{container!="istio-proxy", namespace="nginx", pod=~"nginx.*", resource="memory", unit="byte"})) * 100 > 90
+      labels:
+        role: ingress
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Container: `{{`{{`}} $labels.container {{`}}`}}`
+          Memory usage percentage: `{{`{{`}} $value | humanize {{`}}`}}`
+          Expected <= 90% for 1m
+        summary: The container is using more memory than expected.
+  

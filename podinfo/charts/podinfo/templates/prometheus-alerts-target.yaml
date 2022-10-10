@@ -1,0 +1,99 @@
+{{- if eq .Release.Namespace "continuous-load-target" -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    prometheus: {{ template "podinfo.fullname" . }}
+    role: alert-rules
+  name: prometheus-{{ template "podinfo.fullname" . }}-rules
+spec:
+  groups:
+  - name: ./{{ template "podinfo.fullname" . }}.rules
+    rules: 
+    ## Latency rules
+    - alert: Continuous_Load_Target_p99TooHigh
+      expr: sum by(namespace, pod, path)
+            (rate(http_request_duration_seconds_bucket{path=~"(status_ingress|status_service)", pod=~"target.*", le="0,025"}[1m])) / 
+            sum by(namespace, pod, path) 
+            (rate(http_request_duration_seconds_count{path=~"(status_ingress|status_service)", pod=~"target.*"}[1m])) < 0.99 
+      for: 1m
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Path: `{{`{{`}} $labels.path {{`}}`}}`
+          Percentage of requests served is under 25ms: {{`{{`}} $value | humanize {{`}}`}}
+        summary: The percentage of requests served within the p99 latency threshold is less than 99%.
+    ## Traffic rules
+    - alert: Continuous_Load_Target_NftTrafficTooLow
+      expr: sum by(namespace) (rate(http_requests_total{ pod=~"target.*"}[1m])) < 10
+      for: 3m
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          TPS: `{{`{{`}} $value | printf "%.0f" {{`}}`}}`
+          Expected >= 10 for 3m
+        summary: Traffic is too low in the NFT test so it might not be running correctly.
+    - alert: Continuous_Load_Target_NftTrafficTooHigh
+      expr: sum by(namespace) (rate(http_requests_total{ pod=~"target.*"}[1m])) > 100
+      for: 3m
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          TPS: `{{`{{`}} $value | printf "%.0f" {{`}}`}}`
+          Expected < 100 for 3m
+        summary: Traffic is too high in the NFT test so it might not be running correctly.
+    ## Error rules
+    - alert: Continuous_Load_Target_AppError
+      expr: sum by(namespace, pod, status) (rate(http_requests_total{ status!="200", pod=~"target.*", namespace="continuous-load-target"}[1m])) > 0.01
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          StatusCode: `{{`{{`}} $labels.status {{`}}`}}`
+          Errors: `{{`{{`}} $value {{`}}`}}`
+          Expected: 0
+        summary: Errors have been reported.
+    ## Saturation rules
+    - alert: Continuous_Load_Target_CpuTooHigh
+      expr: sum by(namespace, pod, container) (rate(container_cpu_usage_seconds_total{container!="istio-proxy", namespace="continuous-load-target", pod=~"target.*"}[1m])) -
+            sum by(namespace, pod, container) (kube_pod_container_resource_requests{container!="istio-proxy", namespace="continuous-load-target", pod=~"target.*", resource="cpu", unit="core"}) > 0
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Container: `{{`{{`}} $labels.container {{`}}`}}`
+          Container is using more CPU than requested, cpu burst is: `{{`{{`}} $value {{`}}`}}` cpu core
+          Please investigate
+        summary: The container is using more cpu than expected.
+    - alert: Continuous_Load_Target_MemoryTooHigh
+      expr: (sum by(namespace, pod, container) (container_memory_rss{ container!="istio-proxy", namespace="continuous-load-target", pod=~"target.*"}) /
+            sum by(namespace, pod, container) (kube_pod_container_resource_requests{container!="istio-proxy", namespace="continuous-load-target", pod=~"target.*", resource="memory", unit="byte"})) * 100 > 90
+      labels:
+        role: target
+        severity: minor
+      annotations:
+        description: |-
+          Namespace: `{{`{{`}} $labels.namespace {{`}}`}}`
+          Pod: `{{`{{`}} $labels.pod {{`}}`}}`
+          Container: `{{`{{`}} $labels.container {{`}}`}}`
+          Memory usage percentage: `{{`{{`}} $value | humanize {{`}}`}}`
+          Expected <= 90% for 1m
+        summary: The container is using more memory than expected.
+{{- end }}
