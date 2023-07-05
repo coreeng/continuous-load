@@ -1,2 +1,0 @@
-loadTargetService: http://source-podinfo.continuous-load-source.svc.cluster.local/forward/service
-loadTargetIngress: http://source-podinfo.continuous-load-source.svc.cluster.local/forward/ingress

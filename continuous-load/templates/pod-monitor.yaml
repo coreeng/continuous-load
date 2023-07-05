@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: k6-podmonitor
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: k6
+  podMetricsEndpoints:
+  - port: http
+  namespaceSelector:
+    matchNames:
+    - {{.Release.Namespace}}

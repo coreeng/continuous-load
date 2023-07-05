@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: servicemonitor
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+    - {{.Release.Namespace}}
+    - kube-system
+  selector:
+    matchExpressions:
+    - {key: app.kubernetes.io/name, operator: Exists}
+  endpoints:
+  - port: http
+    interval: 15s
+  - port: https
+    interval: 15s 
+  - port: https-metrics
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    path: /metrics/cadvisor
+    interval: 15s
+    scheme: https
+    tlsConfig:
+      caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecureSkipVerify: true
