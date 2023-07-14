@@ -11,17 +11,13 @@ export let options = {
     insecureSkipTLSVerify: true,
     userAgent: 'MyK6UserAgentString/1.0',
     summaryTrendStats: ["min", "avg", "med", "p(10)", "p(80)", "p(95)", "p(99)", "p(99.9)", "max", "count"],
-    thresholds: {
-      // 90% of requests must finish within 400ms, 95% within 800, and 99.9% within 2s.
-      // e.g. ['p(90) < 400', 'p(95) < 800', 'p(99.9) < 2000']
-      http_req_duration: JSON.parse(THRESHOLDS), 
-    },
+    thresholds: JSON.parse(THRESHOLDS),
     scenarios: {
       open_model: {
         executor: 'constant-arrival-rate',
         rate: REQ_PER_SECOND,
         timeUnit: '1s',
-        duration: '10m',
+        duration: '12m',
         preAllocatedVUs: 20,
       },
     },

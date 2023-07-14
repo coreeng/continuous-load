@@ -8,7 +8,8 @@
 #  2) the target of the load generator. See https://k6.io/docs/javascript-api/k6-http/params/
 #     for into on accepted parameters
 #  3) the number of replicas to run
-#  4) the number of requests per second to run
+#  4) the thresholds for pass/failure. See https://k6.io/docs/using-k6/thresholds/
+#  5) the number of requests per second to run
 # 
 # This implementation uses the podinfo application, which is able to generate 
 # metrics that are used in the dashboard.
@@ -19,13 +20,15 @@ function deploy_continuous_load() {
   local namespace="$1"
   local loadTargetService="$2"
   local replicas="$3"
-  local reqPerSecond="$4"
+  local thresholds="$4"
+  local reqPerSecond="$5"
   echo "===> Deploying Continuous Load"
   helm dependency build ./continuous-load
   helm upgrade -install --wait continuous-load \
   --namespace ${namespace}  \
   --set "podinfo.replicaCount=${replicas}" \
   --set-json "k6.loadTargetService[0]=${loadTargetService}" \
+  --set-json "k6.thresholds=${thresholds}" \
   --set "k6.reqPerSecond=${reqPerSecond}" \
   ./continuous-load/
 }
@@ -56,8 +59,12 @@ function main() {
     }"
 
   local replicas="2"
+  local thresholds="{ \
+    \"http_req_failed\": [\"rate<0.01\"],
+    \"http_req_duration\": [\"p(95)<200\"]
+  }"
   local reqPerSecond="3"
-  deploy_continuous_load "${namespace}" "${loadTargetService}" "${replicas}" "${reqPerSecond}"
+  deploy_continuous_load "${namespace}" "${loadTargetService}" "${replicas}" "${thresholds}" "${reqPerSecond}"
   deploy_dashboard "${namespace}"
   echo "-----------------------------------------"
   echo "-----------------------------------------"
