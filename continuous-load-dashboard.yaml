@@ -527,7 +527,7 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(rate(k6_http_reqs{status=\"200\", namespace=\"continuous-load\"}[2m]))/sum(rate(k6_http_reqs{namespace=\"continuous-load\"}[2m])) * 100",
+              "expr": "sum(rate(k6_http_reqs{status=\"200\", namespace=\"continuous-load\"}[${timespan}]))/sum(rate(k6_http_reqs{namespace=\"continuous-load\"}[${timespan}])) * 100",
               "hide": false,
               "interval": "",
               "legendFormat": "{{ value }}",
@@ -621,30 +621,69 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.90, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[2m]))by (le))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "P90",
-              "queryType": "randomWalk",
-              "refId": "A"
-            },
-            {
-              "exemplar": false,
-              "expr": "histogram_quantile(0.99, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[2m]))by (le))",
+              "expr": "histogram_quantile(0.99, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P99",
               "queryType": "randomWalk",
-              "refId": "B"
+              "refId": "A",
+              "datasource": {
+                "uid": "${prometheus}"
+              },
+              "editorMode": "code",
+              "range": true
             },
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.999, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[2m]))by (le))",
+              "expr": "histogram_quantile(0.95, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P99.9",
+              "legendFormat": "P95",
               "queryType": "randomWalk",
-              "refId": "C"
+              "refId": "B",
+              "datasource": {
+                "uid": "${prometheus}"
+              },
+              "editorMode": "code",
+              "range": true
+            },
+            {
+              "exemplar": false,
+              "expr": "histogram_quantile(0.80, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "P80",
+              "queryType": "randomWalk",
+              "refId": "C",
+              "datasource": {
+                "uid": "${prometheus}"
+              },
+              "editorMode": "code",
+              "range": true
+            },
+            {
+              "datasource": {
+                "uid": "${prometheus}",
+                "type": "prometheus"
+              },
+              "refId": "D",
+              "hide": false,
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.50, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "legendFormat": "P50",
+              "range": true
+            },
+            {
+              "datasource": {
+                "uid": "${prometheus}",
+                "type": "prometheus"
+              },
+              "refId": "E",
+              "hide": false,
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.10, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "legendFormat": "P10",
+              "range": true
             }
           ],
           "timeFrom": null,
@@ -652,9 +691,6 @@ spec:
           "title": "K6 - Latency",
           "type": "timeseries"
         },
-        
-
-
         
         {
           "collapsed": false,
@@ -858,7 +894,7 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (path, method)(rate(http_request_duration_seconds_count{status=\"200\", namespace=\"continuous-load\"}[2m]))/sum by (path, method)(rate(http_request_duration_seconds_count{namespace=\"continuous-load\"}[2m])) * 100",
+              "expr": "sum by (path, method)(rate(http_request_duration_seconds_count{status=\"200\", namespace=\"continuous-load\"}[${timespan}]))/sum by (path, method)(rate(http_request_duration_seconds_count{namespace=\"continuous-load\"}[${timespan}])) * 100",
               "hide": false,
               "interval": "",
               "legendFormat": "Path: {{path}}, Method: {{ method }}",
@@ -949,199 +985,53 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.90, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\"}[2m])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.99, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Path: {{path}} Method: {{method}} Status: {{status}}",
+              "legendFormat": "P99 Path: {{path}} Method: {{method}} Status: {{status}}",
               "queryType": "randomWalk",
               "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "App - Latency p90",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${prometheus}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 11,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "s"
             },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 8,
-            "x": 8,
-            "y": 109
-          },
-          "id": 79,
-          "options": {
-            "legend": {
-              "calcs": [
-                "last"
-              ],
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "pluginVersion": "8.1.5",
-          "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.99, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\"}[2m])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.95, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Path: {{path}} Method: {{method}} Status: {{status}}",
+              "legendFormat": "P95 Path: {{path}} Method: {{method}} Status: {{status}}",
               "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "App - Latency p99",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${prometheus}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 11,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "s"
+              "refId": "B"
             },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 8,
-            "x": 16,
-            "y": 109
-          },
-          "id": 80,
-          "options": {
-            "legend": {
-              "calcs": [
-                "last"
-              ],
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "pluginVersion": "8.1.5",
-          "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.999, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\"}[2m])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.80, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Path: {{path}} Method: {{method}} Status: {{status}}",
+              "legendFormat": "P80 Path: {{path}} Method: {{method}} Status: {{status}}",
               "queryType": "randomWalk",
-              "refId": "A"
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "histogram_quantile(0.50, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "P50 Path: {{path}} Method: {{method}} Status: {{status}}",
+              "queryType": "randomWalk",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "histogram_quantile(0.10, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "P10 Path: {{path}} Method: {{method}} Status: {{status}}",
+              "queryType": "randomWalk",
+              "refId": "E"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "App - Latency p99.9",
+          "title": "App - Latency",
           "type": "timeseries"
         } 
       ],
@@ -1171,36 +1061,74 @@ spec:
             "regex": "",
             "skipUrlSync": false,
             "type": "datasource"
-          },
+          }, 
           {
-            "description": null,
-            "error": null,
-            "hide": 2,
-            "label": null,
-            "name": "target_namespace",
-            "query": "continuous-load",
+            "auto": false,
+            "auto_count": 30,
+            "auto_min": "10s",
+            "current": {
+              "selected": false,
+              "text": "1m",
+              "value": "1m"
+            },
+            "hide": 0,
+            "name": "timespan",
+            "options": [
+              {
+                "selected": true,
+                "text": "1m",
+                "value": "1m"
+              },
+              {
+                "selected": false,
+                "text": "10m",
+                "value": "10m"
+              },
+              {
+                "selected": false,
+                "text": "30m",
+                "value": "30m"
+              },
+              {
+                "selected": false,
+                "text": "1h",
+                "value": "1h"
+              },
+              {
+                "selected": false,
+                "text": "6h",
+                "value": "6h"
+              },
+              {
+                "selected": false,
+                "text": "12h",
+                "value": "12h"
+              },
+              {
+                "selected": false,
+                "text": "1d",
+                "value": "1d"
+              },
+              {
+                "selected": false,
+                "text": "7d",
+                "value": "7d"
+              },
+              {
+                "selected": false,
+                "text": "14d",
+                "value": "14d"
+              },
+              {
+                "selected": false,
+                "text": "30d",
+                "value": "30d"
+              }
+            ],
+            "query": "1m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
             "skipUrlSync": false,
-            "type": "constant"
-          },
-          {
-            "description": "",
-            "error": null,
-            "hide": 2,
-            "label": null,
-            "name": "ingress",
-            "query": "nginx",
-            "skipUrlSync": false,
-            "type": "constant"
-          },
-          {
-            "description": null,
-            "error": null,
-            "hide": 2,
-            "label": null,
-            "name": "generator",
-            "query": "continuous-load",
-            "skipUrlSync": false,
-            "type": "constant"
+            "type": "interval"
           }
         ]
       },
