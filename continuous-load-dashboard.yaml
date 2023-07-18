@@ -14,7 +14,10 @@ spec:
         "list": [
           {
             "builtIn": 1,
-            "datasource": "-- Grafana --",
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -31,14 +34,19 @@ spec:
       },
       "description": "Continuous Load Dashboard",
       "editable": true,
+      "fiscalYearStartMonth": 0,
       "gnetId": 13861,
       "graphTooltip": 0,
-      "iteration": 1634899348901,
+      "id": 1,
       "links": [],
+      "liveNow": false,
       "panels": [
         {
           "collapsed": false,
-          "datasource": null,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -47,11 +55,23 @@ spec:
           },
           "id": 10,
           "panels": [],
+          "targets": [
+            {
+              "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+              },
+              "refId": "A"
+            }
+          ],
           "title": "Availability",
           "type": "row"
         },
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -73,8 +93,12 @@ spec:
                     "value": 0.998
                   },
                   {
+                    "value": 0.999,
+                    "color": "#EAB839"
+                  },
+                  {
                     "color": "green",
-                    "value": 0.999
+                    "value": 0.9999
                   }
                 ]
               },
@@ -84,8 +108,8 @@ spec:
           },
           "gridPos": {
             "h": 6,
-            "w": 4,
-            "x": 0,
+            "w": 8,
+            "x": 8,
             "y": 1
           },
           "id": 6,
@@ -102,257 +126,57 @@ spec:
             "showThresholdMarkers": false,
             "text": {}
           },
-          "pluginVersion": "8.1.5",
+          "pluginVersion": "9.1.6",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "sum by (name) (\n  rate(\n    k6_http_reqs{status=\"200\", type=\"service\"}[5m]\n  )\n)\n/\nsum by (name) (\n  rate(\n    k6_http_reqs{type=\"service\"}[5m]\n  )\n)\n",
+              "expr": "sum by (name) (\n  rate(\n    k6_http_reqs{status=\"200\", type=\"service\"}[${timespan}]\n  )\n)\n/\nsum by (name) (\n  rate(\n    k6_http_reqs{type=\"service\"}[${timespan}]\n  )\n)\n",
               "format": "time_series",
               "interval": "",
               "legendFormat": "",
               "queryType": "randomWalk",
+              "range": true,
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Service Path Availability (5m)",
+          "title": "Service Path Availability (${timespan})",
           "transformations": [],
           "type": "gauge"
         },
-        {
-          "datasource": "${prometheus}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "max": 1,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 0.998
-                  },
-                  {
-                    "color": "green",
-                    "value": 0.999
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 4,
-            "x": 4,
-            "y": 1
-          },
-          "id": 28,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": false,
-            "text": {}
-          },
-          "pluginVersion": "8.1.5",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum by (name) (\n  rate(\n    k6_http_reqs{status=\"200\", type=\"service\"}[1h]\n  )\n)\n/\nsum by (name) (\n  rate(\n    k6_http_reqs{type=\"service\"}[1h]\n  )\n)\n",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "",
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Service Path Availability (1h)",
-          "transformations": [],
-          "type": "gauge"
-        },
-        {
-          "datasource": "${prometheus}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "max": 1,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 0.998
-                  },
-                  {
-                    "color": "green",
-                    "value": 0.999
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 4,
-            "x": 8,
-            "y": 1
-          },
-          "id": 29,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": false,
-            "text": {}
-          },
-          "pluginVersion": "8.1.5",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum by (name) (\n  rate(\n    k6_http_reqs{status=\"200\", type=\"service\"}[24h]\n  )\n)\n/\nsum by (name) (\n  rate(\n    k6_http_reqs{type=\"service\"}[24h]\n  )\n)\n",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "",
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Service Path Availability (24h)",
-          "transformations": [],
-          "type": "gauge"
-        },
-        {
-          "datasource": "${prometheus}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "max": 1,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 0.998
-                  },
-                  {
-                    "color": "green",
-                    "value": 0.999
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 4,
-            "x": 12,
-            "y": 1
-          },
-          "id": 30,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": false,
-            "text": {}
-          },
-          "pluginVersion": "8.1.5",
-          "targets": [
-            {
-              "exemplar": true,
-              "expr": "sum by (name) (\n  rate(\n    k6_http_reqs{status=\"200\", type=\"service\"}[7d]\n  )\n)\n/\nsum by (name) (\n  rate(\n    k6_http_reqs{type=\"service\"}[7d]\n  )\n)\n",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "",
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Service Path Availability (7d)",
-          "transformations": [],
-          "type": "gauge"
-        },
-        
-
         {
           "collapsed": false,
-          "datasource": null,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 33
+            "y": 7
           },
           "id": 43,
           "panels": [],
+          "targets": [
+            {
+              "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+              },
+              "refId": "A"
+            }
+          ],
           "title": "Load Generator",
           "type": "row"
         },
-        
-        
-        
-        
-        
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -360,6 +184,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -407,10 +233,10 @@ spec:
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 8
           },
           "id": 49,
           "options": {
@@ -422,15 +248,20 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "sum by(name, status) (rate(k6_http_reqs{\n    namespace=\"continuous-load\"\n}[$__rate_interval])) > 0",
               "hide": false,
@@ -440,13 +271,13 @@ spec:
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "K6 - RPS by Response Code",
           "type": "timeseries"
         },
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -454,6 +285,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -502,10 +335,10 @@ spec:
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 8
           },
           "id": 50,
           "options": {
@@ -517,15 +350,20 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "sum(rate(k6_http_reqs{status=\"200\", namespace=\"continuous-load\"}[${timespan}]))/sum(rate(k6_http_reqs{namespace=\"continuous-load\"}[${timespan}])) * 100",
               "hide": false,
@@ -535,13 +373,13 @@ spec:
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "K6 - Success Rate (200 responses)",
+          "title": "K6 - Success Rate (200 responses) - ${timespan}",
           "type": "timeseries"
         },
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -549,6 +387,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -596,10 +436,10 @@ spec:
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 8
           },
           "id": 51,
           "options": {
@@ -611,107 +451,116 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "histogram_quantile(0.99, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P99",
               "queryType": "randomWalk",
-              "refId": "A",
+              "range": true,
+              "refId": "A"
+            },
+            {
               "datasource": {
                 "uid": "${prometheus}"
               },
               "editorMode": "code",
-              "range": true
-            },
-            {
               "exemplar": false,
               "expr": "histogram_quantile(0.95, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P95",
               "queryType": "randomWalk",
-              "refId": "B",
+              "range": true,
+              "refId": "B"
+            },
+            {
               "datasource": {
                 "uid": "${prometheus}"
               },
               "editorMode": "code",
-              "range": true
-            },
-            {
               "exemplar": false,
               "expr": "histogram_quantile(0.80, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P80",
               "queryType": "randomWalk",
-              "refId": "C",
+              "range": true,
+              "refId": "C"
+            },
+            {
               "datasource": {
+                "type": "prometheus",
                 "uid": "${prometheus}"
               },
               "editorMode": "code",
-              "range": true
-            },
-            {
-              "datasource": {
-                "uid": "${prometheus}",
-                "type": "prometheus"
-              },
-              "refId": "D",
-              "hide": false,
-              "editorMode": "code",
               "expr": "histogram_quantile(0.50, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "hide": false,
               "legendFormat": "P50",
-              "range": true
+              "range": true,
+              "refId": "D"
             },
             {
               "datasource": {
-                "uid": "${prometheus}",
-                "type": "prometheus"
+                "type": "prometheus",
+                "uid": "${prometheus}"
               },
-              "refId": "E",
-              "hide": false,
               "editorMode": "code",
               "expr": "histogram_quantile(0.10, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "hide": false,
               "legendFormat": "P10",
-              "range": true
+              "range": true,
+              "refId": "E"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "K6 - Latency",
+          "title": "K6 - Latency (${timespan})",
           "type": "timeseries"
         },
-        
         {
           "collapsed": false,
-          "datasource": null,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 87
+            "y": 15
           },
           "id": 55,
           "panels": [],
+          "targets": [
+            {
+              "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+              },
+              "refId": "A"
+            }
+          ],
           "title": "Target Podinfo",
           "type": "row"
         },
-        
-        
-        
-        
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -719,6 +568,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -767,9 +618,9 @@ spec:
           },
           "gridPos": {
             "h": 8,
-            "w": 12,
+            "w": 8,
             "x": 0,
-            "y": 101
+            "y": 16
           },
           "id": 76,
           "options": {
@@ -781,15 +632,20 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "sum by(path, method, status) (rate(http_request_duration_seconds_count{\n    namespace=\"continuous-load\",\n}[$__rate_interval])) > 0",
               "hide": false,
@@ -799,6 +655,9 @@ spec:
               "refId": "A"
             },
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": true,
               "expr": "sum(rate(http_request_duration_seconds_count{namespace=\"continuous-load\"}[$__rate_interval]))",
               "hide": false,
@@ -807,13 +666,13 @@ spec:
               "refId": "B"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "App - RPS by Path, Response Code",
           "type": "timeseries"
         },
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -821,6 +680,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -870,9 +731,9 @@ spec:
           },
           "gridPos": {
             "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 101
+            "w": 8,
+            "x": 8,
+            "y": 16
           },
           "id": 77,
           "options": {
@@ -884,15 +745,20 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "sum by (path, method)(rate(http_request_duration_seconds_count{status=\"200\", namespace=\"continuous-load\"}[${timespan}]))/sum by (path, method)(rate(http_request_duration_seconds_count{namespace=\"continuous-load\"}[${timespan}])) * 100",
               "hide": false,
@@ -902,13 +768,13 @@ spec:
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "App - Success Rate (200 responses)",
+          "title": "App - Success Rate (200 responses) - ${timespan}",
           "type": "timeseries"
         },
         {
-          "datasource": "${prometheus}",
+          "datasource": {
+            "uid": "${prometheus}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -916,6 +782,8 @@ spec:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -963,10 +831,10 @@ spec:
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 8,
             "w": 8,
-            "x": 0,
-            "y": 109
+            "x": 16,
+            "y": 16
           },
           "id": 78,
           "options": {
@@ -975,15 +843,20 @@ spec:
                 "last"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "multi",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.1.5",
           "targets": [
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "histogram_quantile(0.99, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
@@ -993,6 +866,9 @@ spec:
               "refId": "A"
             },
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "histogram_quantile(0.95, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
@@ -1002,6 +878,9 @@ spec:
               "refId": "B"
             },
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "histogram_quantile(0.80, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
@@ -1011,6 +890,9 @@ spec:
               "refId": "C"
             },
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "histogram_quantile(0.50, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
@@ -1020,6 +902,9 @@ spec:
               "refId": "D"
             },
             {
+              "datasource": {
+                "uid": "${prometheus}"
+              },
               "exemplar": false,
               "expr": "histogram_quantile(0.10, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
@@ -1029,14 +914,12 @@ spec:
               "refId": "E"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "App - Latency",
+          "title": "App - Latency (${timespan})",
           "type": "timeseries"
-        } 
+        }
       ],
-      "refresh": "5s",
-      "schemaVersion": 30,
+      "refresh": false,
+      "schemaVersion": 37,
       "style": "dark",
       "tags": [],
       "templating": {
@@ -1047,11 +930,8 @@ spec:
               "text": "Prometheus",
               "value": "Prometheus"
             },
-            "description": null,
-            "error": null,
             "hide": 0,
             "includeAll": false,
-            "label": null,
             "multi": false,
             "name": "prometheus",
             "options": [],
@@ -1061,13 +941,13 @@ spec:
             "regex": "",
             "skipUrlSync": false,
             "type": "datasource"
-          }, 
+          },
           {
             "auto": false,
             "auto_count": 30,
             "auto_min": "10s",
             "current": {
-              "selected": false,
+              "selected": true,
               "text": "1m",
               "value": "1m"
             },
@@ -1126,6 +1006,7 @@ spec:
               }
             ],
             "query": "1m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "queryValue": "",
             "refresh": 2,
             "skipUrlSync": false,
             "type": "interval"
@@ -1133,8 +1014,8 @@ spec:
         ]
       },
       "time": {
-        "from": "now-5m",
-        "to": "now"
+        "from": "2023-07-18T12:09:50.923Z",
+        "to": "2023-07-18T12:21:05.406Z"
       },
       "timepicker": {
         "nowDelay": "",
@@ -1148,5 +1029,6 @@ spec:
       "timezone": "",
       "title": "Continuous Load",
       "uid": "zDpLnqaMz",
-      "version": 1
+      "version": 16,
+      "weekStart": ""
     }
