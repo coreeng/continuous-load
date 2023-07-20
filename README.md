@@ -53,8 +53,3 @@ To install only the continuous-load components run without the flag:
 ```
 ./deploy.sh
 ```
-
-
-## Improvements
-
-- [Chaos testing] Use a controller like [pod-reaper](https://github.com/target/pod-reaper) to graceful shutdown target podinfo  pods to exercise graceful shutdown/rolling deployment
