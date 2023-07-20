@@ -10,6 +10,10 @@ spec:
   podMonitorSelector:
     matchLabels:
       release: prometheus
+  ruleSelector:
+    matchLabels:
+      prometheus: k6
+      role: alert-rules
   resources:
     requests:
       memory: 400Mi
