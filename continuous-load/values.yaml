@@ -1,0 +1,17 @@
+podinfo:
+  replicaCount: "2"
+  
+k6:
+  loadTargetService:
+  - method: GET
+    url: http://continuous-load-podinfo.continuous-load.svc.cluster.local:9898/status/200
+    params:  
+      tags: 
+        type: service
+        
+  thresholds:
+    http_req_failed: 
+    - rate<0.01
+    http_req_duration: 
+    - p(95)<200
+  reqPerSecond: "3"

@@ -33,9 +33,7 @@ spec:
       "editable": true,
       "gnetId": 13861,
       "graphTooltip": 0,
-      "id": 1,
       "links": [],
-      "liveNow": false,
       "panels": [
         {
           "collapsed": false,
@@ -699,10 +697,7 @@ spec:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus}"
-          },
+          "datasource": "${prometheus}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -824,10 +819,7 @@ spec:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus}"
-          },
+          "datasource": "${prometheus}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1136,10 +1128,7 @@ spec:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus}"
-          },
+          "datasource": "${prometheus}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1259,10 +1248,7 @@ spec:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus}"
-          },
+          "datasource": "${prometheus}",
           "description": "",
           "fieldConfig": {
             "defaults": {

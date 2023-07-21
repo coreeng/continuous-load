@@ -6,7 +6,7 @@
 # Params:
 #  1) the namespace in which to deploy the monitors
 #  2) the target of the load generator. See https://k6.io/docs/javascript-api/k6-http/params/
-#     for into on accepted parameters
+#     for info on accepted parameters
 #  3) the number of replicas to run
 #  4) the thresholds for pass/failure. See https://k6.io/docs/using-k6/thresholds/
 #  5) the number of requests per second to run
@@ -23,7 +23,7 @@ function deploy_continuous_load() {
   local thresholds="$4"
   local reqPerSecond="$5"
   echo "===> Deploying Continuous Load"
-  helm dependency build ./continuous-load
+  helm dependency update ./continuous-load
   helm upgrade -install --wait continuous-load \
   --namespace ${namespace}  \
   --set "podinfo.replicaCount=${replicas}" \
@@ -78,7 +78,6 @@ while getopts 'i' flag; do
     i)  
       source ./prerequisites.sh
       namespace="continuous-load"
-      create_namespace $namespace
       deploy_monitoring $namespace "http://prometheus-operated.${namespace}.svc.cluster.local:9090"
       ;;
     *) echo "Invalid option: -$flag" ;;

@@ -1,6 +1,8 @@
 # Continuous Load
 
-Continuous Load is a project designed to run load 24/7 across an infrastructure and monitor the network health even in production. 
+![Continuous Load](./dashboard.png)
+
+Continuous Load is a project designed to run load 24/7 across an infrastructure and monitor the network health even in production. Its goal is to find problems in infrastructure before the users of that infrastructure find them.
 
 ## What Continuous Load Tries to Solve
 
@@ -33,7 +35,7 @@ Such alerts follow the [Golden Signal](https://sysdig.com/blog/golden-signals-ku
 
 A GrafanaDashboard resource is used to create the continuous load dashboard.
 
-## Run 
+## Running Locally 
 
 To install both the prerequisites and the main chart run:
 ```
@@ -53,3 +55,63 @@ To install only the continuous-load components run without the flag:
 ```
 ./deploy.sh
 ```
+
+### Port Forward
+
+The dashboard can be viewed by the use of port forwarding after which it can be viewed on localhost:3000
+```
+kubectl -n continuous-load port-forward svc/grafana-service 3000
+```
+
+This can be done likewise with Prometheus:
+```
+kubectl -n continuous-load port-forward svc/prometheus-operated 9090
+```
+
+## Deployment
+There are two helm charts:
+
+Prerequsites: everything needed to display the dashboards for Continuous Load
+Continuous Load: The run time components of Continuous Load
+
+For an end to end demo, install both, for production deployments, consider integrating with an existing prometheus and grafana installation.
+
+### Pre-configured monitoring stack (pre-requsites)
+
+Run the following commands to deploy the monitoring stack:
+
+```
+namespace="continuous-load"
+
+helm upgrade -install grafana-operator oci://ghcr.io/grafana-operator/helm-charts/grafana-operator \
+  --namespace ${namespace} \
+  --create-namespace \
+  --version v5.0.0
+
+helm dependency update ./monitoring/
+
+helm upgrade -install --wait monitoring \
+  --namespace ${namespace}  \
+  ./monitoring/
+```
+
+### Continuous Load (no dashboarding)
+
+Run the following to deploy the continuous load
+```
+helm dependency update ./continuous-load
+
+helm upgrade -install --wait continuous-load \
+  --namespace ${namespace}  \
+  ./continuous-load/
+```
+
+### Deploying dashboards
+
+Run the following to deploy the dashboard
+
+```
+kubectl -n ${namespace} apply -f continuous-load-dashboard.yaml
+```
+
+
