@@ -2,7 +2,7 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: grafanadashboard-sample
+  name: continuous-load
 spec:
   resyncPeriod: 5m
   instanceSelector:

@@ -63,6 +63,9 @@ The dashboard can be viewed by the use of port forwarding after which it can be 
 kubectl -n continuous-load port-forward svc/grafana-service 3000
 ```
 
+The default username and password is `root:secret`, which can be overridden in the helm chart values.
+
+
 This can be done likewise with Prometheus:
 ```
 kubectl -n continuous-load port-forward svc/prometheus-operated 9090

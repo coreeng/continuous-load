@@ -12,5 +12,5 @@ spec:
     auth:
       disable_login_form: "false"
     security:
-      admin_user: root
-      admin_password: secret
+      admin_user: {{ .Values.admin_user }}
+      admin_password: {{ .Values.admin_password }}
