@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      release: prometheus
+  podMonitorSelector:
+    matchLabels:
+      release: prometheus
+  ruleSelector:
+    matchLabels:
+      prometheus: k6
+      role: alert-rules
+  resources:
+    requests:
+      memory: 400Mi
+  enableAdminAPI: false

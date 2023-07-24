@@ -1,66 +1,120 @@
-## Continuous Load
+# Continuous Load
 
-Continuous Load is a project design to run load 24/7 across an infrastructure and monitor the network health even in production. 
-We have rolled out various versions at clients.
+![Continuous Load](./dashboard.png)
 
-### What will continuous load try to solve ?
+Continuous Load is a project designed to run load 24/7 across an infrastructure and monitor the network health even in production. Its goal is to find problems in infrastructure before the users of that infrastructure find them.
 
-Exercise full network flow to gain visibility and rely on metrics and alerts to assess the impact of a change.
+## What Continuous Load Tries to Solve
 
-Confidence when introducing change to not affect tenants on the platform. 
-Being aware of issues before tenants report it.
+- Exercise full network flow to gain visibility and rely on metrics and alerts to assess the impact of a change.
 
-Reproduce what applications are doing on the cluster for example DNS/UDP and HTTP/GRPC/TCP flow through the main network paths like internal, external ingresses and pod to pod communication through service ip.
+- Gain Confidence when introducing change not to affect tenants on the platform. 
+Become aware of issues before a tenant reports it.
 
-Exercise DNS/UDP network path (service ip CoreDNS) test-client-load-injector and test-backend-service resolving kubernetes and ingress hostname.
+- Reproduce what applications are doing on the cluster for example DNS/UDP and HTTP/GRPC/TCP flow through the main network paths like pod to pod communication through service IPs.
 
-Chaos testing in the background (resilient to failures):
-  - deleting test-backend-service (pod ip churn, graceful shutdown, recycle TCP connections: the load injector will be forced to create new connection)
-  - delete of nodes (exercising autoscaling or node termination)
-
-### Components
+## Components
 
 This project relies on: 
  - [k6](https://k6.io/) and statsd-exporter: acting as a load-injector
- - podinfo: [golang application](https://github.com/stefanprodan/podinfo), we are using a modified version available [here](https://github.com/rewiko/podinfo)
- - nginx ingress controller [link](https://github.com/kubernetes/ingress-nginx/)
- - istio [link](https://istio.io/latest/docs/)
- - monitoring stack [link](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
- - docker and [k3d](https://k3d.io/) to create local k8s cluster
-
-### Architecture 
-
-![Continuous Load](./docs/Continuous%20Load%20Diagram.png)
-
-The load-injector send load to source-podinfo and not to the ingress directly because load-injectors like k6 or gatling are design to retry on connection reset which can hide issues. It is also interresting to own a golang application to go further and add functional validation like JWT secret rotation, MTLS or talking to a database. 
+ - Podinfo: [golang application](https://github.com/stefanprodan/podinfo)
+ - Prometheus Operator [link](https://prometheus-operator.dev/)
+ - Grafana Operator [link](https://grafana-operator.github.io/grafana-operator/)
+ - Helm
 
 ### Monitoring
 
-Each component creates a ServiceMonitor or PodMonitor resource to configure prometheus automatically.
+A ServiceMonitor or PodMonitor resources are used to configure prometheus and are found in the relevant charts.
 
 ### Alerts
 
-Each component creates PrometheusRule resources to configure alerts on prometheus automatically.
-Those alerts follow the [Golden Signal principles](https://sysdig.com/blog/golden-signals-kubernetes/). 
+PrometheusRule resources are created to configure alerts on prometheus.
+Such alerts follow the [Golden Signal](https://sysdig.com/blog/golden-signals-kubernetes/) principles. 
 
 ### Dashboard 
 
-Continuous dashboard is create automatically and the link will be available within the console after running the script below.
+A GrafanaDashboard resource is used to create the continuous load dashboard.
 
-### Run 
+## Running Locally 
+
+To install both the prerequisites and the main chart run:
+```
+./deploy.sh -i
+```
+Note:
+If there is already a deployment of the prometheus operator installed on the cluster, running this can lead to a conflict and prevent the prometheus instance from starting.  To fix this, delete one of the operator deployments e.g.
+```
+# find out if there are multiple operator deployments
+kubectl get all --all-namespaces | grep 'prom.*operator'
+
+# delete the unnecessary deployment
+kubectl -n <namespace> delete deployment.apps/prometheus-operator
+```
+
+To install only the continuous-load components run without the flag:
+```
+./deploy.sh
+```
+
+### Port Forward
+
+The dashboard can be viewed by the use of port forwarding after which it can be viewed on localhost:3000
+```
+kubectl -n continuous-load port-forward svc/grafana-service 3000
+```
+
+The default username and password is `root:secret`, which can be overridden in the helm chart values.
+
+
+This can be done likewise with Prometheus:
+```
+kubectl -n continuous-load port-forward svc/prometheus-operated 9090
+```
+
+## Deployment
+There are two helm charts:
+
+Prerequsites: everything needed to display the dashboards for Continuous Load
+Continuous Load: The run time components of Continuous Load
+
+For an end to end demo, install both, for production deployments, consider integrating with an existing prometheus and grafana installation.
+
+### Pre-configured monitoring stack (pre-requsites)
+
+Run the following commands to deploy the monitoring stack:
 
 ```
-./create-cluster-istio-k3d.sh
+namespace="continuous-load"
+
+helm upgrade -install grafana-operator oci://ghcr.io/grafana-operator/helm-charts/grafana-operator \
+  --namespace ${namespace} \
+  --create-namespace \
+  --version v5.0.0
+
+helm dependency update ./monitoring/
+
+helm upgrade -install --wait monitoring \
+  --namespace ${namespace}  \
+  ./monitoring/
 ```
 
-## Integration tests 
+### Continuous Load (no dashboarding)
 
-Integration tests have been created [here](podinfo/test/integration/integration_test.go) but will not work for the local version, it needs a bit of work.
+Run the following to deploy the continuous load
+```
+helm dependency update ./continuous-load
+
+helm upgrade -install --wait continuous-load \
+  --namespace ${namespace}  \
+  ./continuous-load/
+```
+
+### Deploying dashboards
+
+Run the following to deploy the dashboard
 
 ```
-cd podinfo ; make integration prometheus_url=$prometheus_url source_url=$source_url target_url=$target_url region=$region cluster=$cluster
+kubectl -n ${namespace} apply -f continuous-load-dashboard.yaml
 ```
 
-### Improvements
 
-- [Chaos testing] Use a controller like [pod-reaper](https://github.com/target/pod-reaper) to graceful shutdown target podinfo and nginx pods to exercise graceful shutdown/rolling deployment

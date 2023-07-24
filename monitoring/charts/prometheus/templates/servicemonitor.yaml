@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kube-system-servicemonitor
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  selector:
+    matchExpressions:
+    - {key: app.kubernetes.io/name, operator: Exists}
+  endpoints:
+    - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      path: /metrics
+      targetPort: 10250
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true 

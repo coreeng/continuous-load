@@ -1,0 +1,7 @@
+# -- The Prometheus to use as a datasource
+prometheusUrl: http://prometheus-operated.continuous-load.svc.cluster.local:9090
+
+# -- The credentials for Grafana
+credentials:
+  admin_user: root
+  admin_password: secret
