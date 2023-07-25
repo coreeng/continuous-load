@@ -23,14 +23,14 @@ function deploy_continuous_load() {
   local thresholds="$4"
   local reqPerSecond="$5"
   echo "===> Deploying Continuous Load"
-  helm dependency update ./continuous-load
+  helm dependency update ./charts/continuous-load
   helm upgrade -install --wait continuous-load \
   --namespace ${namespace}  \
   --set "podinfo.replicaCount=${replicas}" \
   --set-json "k6.loadTargetService[0]=${loadTargetService}" \
   --set-json "k6.thresholds=${thresholds}" \
   --set "k6.reqPerSecond=${reqPerSecond}" \
-  ./continuous-load/
+  ./charts/continuous-load/
 }
 
 # deploy_dashboard - deploys the Grafana dashboard for monitoring the health of 
