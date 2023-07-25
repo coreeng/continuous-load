@@ -8,10 +8,10 @@ function deploy_monitoring() {
     --version v5.0.0 \
     --create-namespace 
     
-    helm dependency build ./monitoring/
+    helm dependency build ./charts/monitoring/
     helm upgrade -install --wait monitoring \
     --namespace ${namespace}  \
     --set "grafana.prometheusUrl=${prometheusUrl}" \
-    ./monitoring/
+    ./charts/monitoring/
 }
 
