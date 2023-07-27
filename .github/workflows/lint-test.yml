@@ -1,0 +1,66 @@
+name: Lint and Test Charts
+
+on: pull_request
+
+jobs:
+  list-changed:
+    runs-on: ubuntu-latest
+
+    outputs:
+      changed: ${{ steps.list-changed.outputs.changed }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+        
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch main)
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+  lint:
+    runs-on: ubuntu-latest
+    needs: [list-changed]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Run chart-testing (lint)
+        run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
+
+  install:
+    runs-on: ubuntu-latest
+    needs: [list-changed, lint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.2.0
+        if: needs.list-changed.outputs.changed == 'true'
+
+      - name: Run chart-testing (install)
+        run: ct install --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
