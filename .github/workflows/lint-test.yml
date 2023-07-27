@@ -16,7 +16,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup
-        uses: ./.github/workflows/setup.yml
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
         
       - name: Run chart-testing (list-changed)
         id: list-changed
@@ -33,9 +35,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-                
+
       - name: Setup
-        uses: ./.github/workflows/setup.yml
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Run chart-testing (lint)
         run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
@@ -50,8 +54,10 @@ jobs:
           fetch-depth: 0
 
       - name: Setup
-        uses: ./.github/workflows/setup.yml
-
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          
       - name: Create kind cluster
         uses: helm/kind-action@v1.2.0
         if: needs.list-changed.outputs.changed == 'true'
