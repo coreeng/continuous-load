@@ -24,6 +24,30 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - name: Get Previous tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          prefix: continuous-load-
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: get previous version from tag
+        id: previousversion
+        shell: bash
+        run: |
+          echo "::set-output name=version::$(echo ${{ steps.previoustag.outputs.tag }} | cut -d'-' -f 3)"
+
+      - name: Get next minor version
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previousversion.outputs.version }}
+
+      - name: Set versions in Charts
+        run: |
+          find . -type f -name 'Chart.yaml' -maxdepth 3 -exec sed -i -e 's|^version:.*|version: ${{ steps.semvers.outputs.minor }}|' {} \;
+
       - name: Add dependency chart repos
         run: |
           helm repo add podinfo https://stefanprodan.github.io/podinfo
