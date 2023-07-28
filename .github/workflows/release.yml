@@ -43,7 +43,7 @@ jobs:
 
       - name: Set versions in Charts
         run: |
-          find . -type f -name 'Chart.yaml' -exec sed -i -e 's|^version:.*|version: ${{ steps.semvers.outputs.minor }}|' {} \;
+          find . -type f -name 'Chart.yaml' -maxdepth 3 -exec sed -i -e 's|^version:.*|version: ${{ steps.semvers.outputs.minor }}|' {} \;
 
       - name: Add dependency chart repos
         run: |
