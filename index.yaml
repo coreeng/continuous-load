@@ -3,6 +3,18 @@ entries:
   continuous-load:
   - apiVersion: v1
     appVersion: 1.0.0
+    created: "2023-07-28T09:05:16.379266573Z"
+    description: 'A Helm chart to run continuous load.  This implementation uses the
+      podinfo application, which is able to generate  metrics that are used in the
+      dashboard.  This implementation uses k6 to generate the load.  The parameters
+      are defined  in charts/k6/load.js. '
+    digest: 4308857c15bf948af69dfd5c81100d4643c25e97ce51e0256367e61640ae53fd
+    name: continuous-load
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/continuous-load-1.1.0/continuous-load-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v1
+    appVersion: 1.0.0
     created: "2023-07-27T12:09:27.682929237Z"
     description: 'A Helm chart to run continuous load.  This implementation uses the
       podinfo application, which is able to generate  metrics that are used in the
@@ -16,6 +28,15 @@ entries:
   monitoring:
   - apiVersion: v1
     appVersion: 1.0.0
+    created: "2023-07-28T09:05:16.586261593Z"
+    description: A Helm chart to run the monitoring stack for continuous load
+    digest: d700d2240d3d7468b88e635da6d67149071e37db3d7ce9fff080a2583ed27399
+    name: monitoring
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.1.0/monitoring-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v1
+    appVersion: 1.0.0
     created: "2023-07-27T12:09:27.86982935Z"
     description: A Helm chart to run the monitoring stack for continuous load
     digest: dcf53897fac5c2c1380bb729c672818babbe9348c97ede3197d2a9221f838b56
@@ -23,4 +44,4 @@ entries:
     urls:
     - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.0.0/monitoring-1.0.0.tgz
     version: 1.0.0
-generated: "2023-07-27T12:09:27.86983755Z"
+generated: "2023-07-28T09:05:16.586278295Z"
