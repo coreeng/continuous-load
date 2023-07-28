@@ -1,23 +1,23 @@
 podinfo:
   # -- Configure the number of replicas of the target service
   replicaCount: "2"
-  
+
 k6:
   # -- Configure the target(s) of the continuous load
   loadTargetService:
   - method: GET
     url: http://continuous-load-podinfo.continuous-load.svc.cluster.local:9898/status/200
     # -- See https://k6.io/docs/javascript-api/k6-http/params/ for info on accepted parameters
-    params:  
-      tags: 
+    params:
+      tags:
         type: service
-  
-  # -- See https://k6.io/docs/using-k6/thresholds/ for info on thresholds for pass/failure.     
+
+  # -- See https://k6.io/docs/using-k6/thresholds/ for info on thresholds for pass/failure.
   thresholds:
-    http_req_failed: 
+    http_req_failed:
     - rate<0.01
-    http_req_duration: 
+    http_req_duration:
     - p(95)<200
 
-  # -- The throughput required 
+  # -- The throughput required
   reqPerSecond: "3"

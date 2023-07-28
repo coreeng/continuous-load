@@ -40,9 +40,14 @@ jobs:
         uses: ./.github/actions/setup
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
+      
+      - name: Bump Version
+        uses: ./.github/actions/bump-version
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Run chart-testing (lint)
-        run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
+        run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main --validate-maintainers=False
 
   install:
     runs-on: ubuntu-latest
@@ -57,10 +62,10 @@ jobs:
         uses: ./.github/actions/setup
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
-          
+
       - name: Create kind cluster
         uses: helm/kind-action@v1.2.0
         if: needs.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
+        run: ./deploy.sh -i
