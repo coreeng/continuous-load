@@ -1,6 +1,25 @@
 apiVersion: v1
 entries:
   continuous-load:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-07-28T14:02:27.668727633Z"
+    dependencies:
+    - name: k6
+      repository: file://charts/k6
+      version: 1.0.0
+    - name: podinfo
+      repository: https://stefanprodan.github.io/podinfo
+      version: 6.4.0
+    description: 'A Helm chart to run continuous load. This implementation uses the
+      podinfo application, which is able to generate metrics that are used in the
+      dashboard.  This implementation uses k6 to generate the load.  The parameters
+      are defined in charts/k6/load.js. '
+    digest: 02e0a7aaafe8b8302380b626ae09899ec0c974261c92c9e13e7831087274b4f5
+    name: continuous-load
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/continuous-load-1.2.0/continuous-load-1.2.0.tgz
+    version: 1.2.0
   - apiVersion: v1
     appVersion: 1.0.0
     created: "2023-07-28T09:05:16.379266573Z"
@@ -26,6 +45,22 @@ entries:
     - https://github.com/coreeng/continuous-load/releases/download/continuous-load-1.0.0/continuous-load-1.0.0.tgz
     version: 1.0.0
   monitoring:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-07-28T14:02:27.902049414Z"
+    dependencies:
+    - name: prometheus
+      repository: file://charts/prometheus
+      version: 1.0.0
+    - name: grafana
+      repository: file://charts/grafana
+      version: 1.0.0
+    description: A Helm chart to run the monitoring stack for continuous load
+    digest: 2d8e157d665a13780458e3dfba72de3e1efa25f8e3f5e18432d0db79e78377f2
+    name: monitoring
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.2.0/monitoring-1.2.0.tgz
+    version: 1.2.0
   - apiVersion: v1
     appVersion: 1.0.0
     created: "2023-07-28T09:05:16.586261593Z"
@@ -44,4 +79,4 @@ entries:
     urls:
     - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.0.0/monitoring-1.0.0.tgz
     version: 1.0.0
-generated: "2023-07-28T09:05:16.586278295Z"
+generated: "2023-07-28T14:02:27.902073216Z"
