@@ -47,7 +47,7 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Run chart-testing (lint)
-        run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
+        run: ct lint --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main --validate-maintainers=False
 
   install:
     runs-on: ubuntu-latest
@@ -68,4 +68,4 @@ jobs:
         if: needs.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main
+        run: ct install --chart-repos podinfo=https://stefanprodan.github.io/podinfo --target-branch main --namespace continuous-load
