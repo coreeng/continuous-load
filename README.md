@@ -79,6 +79,13 @@ Continuous Load: The run time components of Continuous Load
 
 For an end to end demo, install both, for production deployments, consider integrating with an existing prometheus and grafana installation.
 
+First add the helm repo:
+
+```
+helm repo add continuous-load https://coreeng.github.io/continuous-load/
+helm repo update
+```
+
 ### Pre-configured monitoring stack (pre-requsites)
 
 Run the following commands to deploy the monitoring stack:
@@ -91,22 +98,18 @@ helm upgrade -install grafana-operator oci://ghcr.io/grafana-operator/helm-chart
   --create-namespace \
   --version v5.0.0
 
-helm dependency update ./monitoring/
-
 helm upgrade -install --wait monitoring \
   --namespace ${namespace}  \
-  ./monitoring/
+  continuous-load/monitoring
 ```
 
 ### Continuous Load (no dashboarding)
 
 Run the following to deploy the continuous load
 ```
-helm dependency update ./continuous-load
-
 helm upgrade -install --wait continuous-load \
   --namespace ${namespace}  \
-  ./continuous-load/
+  continuous-load/continuous-load
 ```
 
 ### Deploying dashboards
