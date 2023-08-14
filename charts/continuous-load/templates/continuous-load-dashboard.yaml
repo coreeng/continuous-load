@@ -1,3 +1,4 @@
+{{- if .Values.dashboard.enabled -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -7,7 +8,7 @@ spec:
   resyncPeriod: 5m
   instanceSelector:
     matchLabels:
-      dashboards: "grafana"
+      dashboards: {{ .Values.grafanaInstanceLabel }}
   json: >-
     {
       "annotations": {
@@ -588,10 +589,10 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by(name, status) (rate(k6_http_reqs{\n    namespace=\"continuous-load\"\n}[$__rate_interval])) > 0",
+              "expr": "sum by(name, status) (rate(k6_http_reqs{\n    namespace=\"{{ .Release.Namespace }}\"\n}[$__rate_interval])) > 0",
               "hide": false,
               "interval": "",
-              "legendFormat": "Response  {{ status }}",
+              "legendFormat": "Response  {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "range": true,
               "refId": "A"
@@ -684,10 +685,10 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(rate(k6_http_reqs{status=\"200\", namespace=\"continuous-load\"}[${timespan}]))/sum(rate(k6_http_reqs{namespace=\"continuous-load\"}[${timespan}])) * 100",
+              "expr": "sum(rate(k6_http_reqs{status=\"200\", namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))/sum(rate(k6_http_reqs{namespace=\"{{ .Release.Namespace }}\"}[${timespan}])) * 100",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{value }}",
+              "legendFormat": "{{`{{ value }}`}}",
               "queryType": "randomWalk",
               "range": true,
               "refId": "A"
@@ -779,7 +780,7 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.95, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "expr": "histogram_quantile(0.95, \nsum(rate(k6_http_req_duration_bucket{namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P95",
@@ -790,7 +791,7 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.80, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "expr": "histogram_quantile(0.80, \nsum(rate(k6_http_req_duration_bucket{namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P80",
@@ -800,7 +801,7 @@ spec:
             },
             {
               "editorMode": "code",
-              "expr": "histogram_quantile(0.50, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "expr": "histogram_quantile(0.50, \nsum(rate(k6_http_req_duration_bucket{namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))by (le))",
               "hide": false,
               "legendFormat": "P50",
               "range": true,
@@ -808,7 +809,7 @@ spec:
             },
             {
               "editorMode": "code",
-              "expr": "histogram_quantile(0.10, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "expr": "histogram_quantile(0.10, \nsum(rate(k6_http_req_duration_bucket{namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))by (le))",
               "hide": false,
               "legendFormat": "P10",
               "range": true,
@@ -901,7 +902,7 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.99, \nsum(rate(k6_http_req_duration_bucket{namespace=\"continuous-load\"}[${timespan}]))by (le))",
+              "expr": "histogram_quantile(0.99, \nsum(rate(k6_http_req_duration_bucket{namespace=\"{{ .Release.Namespace }}\"}[${timespan}]))by (le))",
               "hide": false,
               "interval": "",
               "legendFormat": "P99",
@@ -1009,10 +1010,10 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by(path, method, status) (rate(http_request_duration_seconds_count{\n    namespace=\"continuous-load\", path=\"status\"\n}[$__rate_interval])) > 0",
+              "expr": "sum by(path, method, status) (rate(http_request_duration_seconds_count{\n    namespace=\"{{ .Release.Namespace }}\", path=\"status\"\n}[$__rate_interval])) > 0",
               "hide": false,
               "interval": "",
-              "legendFormat": "Response  {{ status }}",
+              "legendFormat": "Response  {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "range": true,
               "refId": "A"
@@ -1020,7 +1021,7 @@ spec:
             {
               "editorMode": "code",
               "exemplar": true,
-              "expr": "sum(rate(http_request_duration_seconds_count{namespace=\"continuous-load\",  path=\"status\"}[$__rate_interval]))",
+              "expr": "sum(rate(http_request_duration_seconds_count{namespace=\"{{ .Release.Namespace }}\",  path=\"status\"}[$__rate_interval]))",
               "hide": false,
               "interval": "",
               "legendFormat": "TOTAL",
@@ -1115,10 +1116,10 @@ spec:
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (path, method)(rate(http_request_duration_seconds_count{status=\"200\", namespace=\"continuous-load\",  path=\"status\"}[${timespan}]))/sum by (path, method)(rate(http_request_duration_seconds_count{namespace=\"continuous-load\",  path=\"status\"}[${timespan}])) * 100",
+              "expr": "sum by (path, method)(rate(http_request_duration_seconds_count{status=\"200\", namespace=\"{{ .Release.Namespace }}\",  path=\"status\"}[${timespan}]))/sum by (path, method)(rate(http_request_duration_seconds_count{namespace=\"{{ .Release.Namespace }}\",  path=\"status\"}[${timespan}])) * 100",
               "hide": false,
               "interval": "",
-              "legendFormat": "Path: {{path}}",
+              "legendFormat": "Path: {{`{{ path }}`}}",
               "queryType": "randomWalk",
               "range": true,
               "refId": "A"
@@ -1209,37 +1210,37 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.95, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.95, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"{{ .Release.Namespace }}\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P95 Path: {{path}} Status: {{status}}",
+              "legendFormat": "P95 Path: {{`{{ path }}`}} Status: {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.80, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.80, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"{{ .Release.Namespace }}\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P80 Path: {{path}} Status: {{status}}",
+              "legendFormat": "P80 Path: {{`{{ path }}`}} Status: {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.50, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.50, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"{{ .Release.Namespace }}\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P50 Path: {{path}} Status: {{status}}",
+              "legendFormat": "P50 Path: {{`{{ path }}`}} Status: {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "refId": "D"
             },
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.10, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.10, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"{{ .Release.Namespace }}\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P10 Path: {{path}} Status: {{status}}",
+              "legendFormat": "P10 Path: {{`{{ path }}`}} Status: {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "refId": "E"
             }
@@ -1329,10 +1330,10 @@ spec:
           "targets": [
             {
               "exemplar": false,
-              "expr": "histogram_quantile(0.99, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"continuous-load\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
+              "expr": "histogram_quantile(0.99, \nsum(rate(http_request_duration_seconds_bucket{namespace=\"{{ .Release.Namespace }}\", path=\"status\"}[${timespan}])) by (le, path, method, status))",
               "hide": false,
               "interval": "",
-              "legendFormat": "P99 Path: {{path}} Status: {{status}}",
+              "legendFormat": "P99 Path: {{`{{ path }}`}} Status: {{`{{ status }}`}}",
               "queryType": "randomWalk",
               "refId": "A"
             }
@@ -1455,3 +1456,4 @@ spec:
       "version": 3,
       "weekStart": ""
     }
+{{- end -}}
