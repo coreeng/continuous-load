@@ -1,3 +1,4 @@
+{{- if eq .Values.global.promOperator "coreos" -}}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -13,3 +14,20 @@ spec:
   namespaceSelector:
     matchNames:
     - {{.Release.Namespace}}
+{{- end -}}
+{{- if eq .Values.global.promOperator "googleapis" -}}
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: k6-podmonitor
+  labels:
+    release: prometheus
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: k6
+  endpoints:
+  - port: http
+{{- end -}}

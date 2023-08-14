@@ -1,3 +1,5 @@
+{{- if eq .Values.global.promOperator "coreos" -}}
+---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -25,3 +27,23 @@ spec:
     tlsConfig:
       caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
       insecureSkipVerify: true
+{{- end -}}
+{{- if eq .Values.global.promOperator "googleapis" -}}
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: servicemonitor
+  labels:
+    release: prometheus
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchExpressions:
+    - {key: app.kubernetes.io/name, operator: Exists}
+  endpoints:
+  - port: http
+    interval: 15s
+  - port: https
+    interval: 15s
+{{- end -}}

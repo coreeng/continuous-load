@@ -1,3 +1,13 @@
+global:
+  # -- Configure the Prometheus operator to use.  Valid values are "coreos", "googleapis", "none"
+  promOperator: coreos
+
+# -- Configure the grafana instance that the dashboard will be deploy to
+grafanaInstanceLabel: grafana
+
+dashboard:
+  enabled: true
+
 podinfo:
   # -- Configure the number of replicas of the target service
   replicaCount: "2"
