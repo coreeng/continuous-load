@@ -66,10 +66,11 @@ spec:
               volumeMounts:
                 - name: scripts-vol
                   mountPath: /scripts
+            {{ if .Values.prometheusStatsd.enable -}}
             - name: prometheus-statsd-exporter
               securityContext:
                 {}
-              image: "prom/statsd-exporter:v0.20.0"
+              image: "{{ .Values.prometheusStatsd.image.repository }}:{{ .Values.prometheusStatsd.image.tag }}"
               imagePullPolicy: IfNotPresent
               args:
                 - --web.listen-address=:9102
@@ -110,6 +111,7 @@ spec:
               volumeMounts:
                 - name: statsd-mapping-config
                   mountPath: /etc/prometheus-statsd-exporter
+            {{- end }}
           restartPolicy: Never
           affinity:
             podAntiAffinity:
@@ -125,9 +127,11 @@ spec:
             - name: scripts-vol
               configMap:
                 name: k6
+            {{ if .Values.prometheusStatsd.enable -}}
             - name: statsd-mapping-config
               configMap:
                 name: statsd-config
                 items:
                   - key: statsd.mappingConf
                     path: statsd-mapping.conf
+            {{- end }}

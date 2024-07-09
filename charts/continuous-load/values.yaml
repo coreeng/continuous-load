@@ -39,3 +39,9 @@ k6:
   reqPerSecond: "3"
 
   datadogAddr: "127.0.0.1:9125"
+
+  prometheusStatsd:
+    enable: true
+    image:
+      repository: prom/statsd-exporter
+      tag: v0.20.0
