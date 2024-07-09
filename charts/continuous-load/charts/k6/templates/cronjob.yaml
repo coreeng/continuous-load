@@ -56,6 +56,9 @@ spec:
                     {{ .Values.thresholds | toJson }} 
                 - name: K6_NO_USAGE_REPORT
                   value: "true"
+                - name: TAGS
+                  value: |
+                    {{ .Values.tags | toJson }}
               command: [ "sh", "-c", "k6 run /scripts/load.js; exit_code=$?; echo exit_code is $exit_code; wget --post-data '' http://127.0.0.1:15020/quitquitquit || true; exit $exit_code;"]
               resources:
                 requests:
