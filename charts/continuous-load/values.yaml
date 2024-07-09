@@ -37,3 +37,5 @@ k6:
 
   # -- The throughput required
   reqPerSecond: "3"
+
+  datadogAddr: "127.0.0.1:9125"

@@ -43,7 +43,7 @@ spec:
                 - name: K6_STATSD_ENABLE_TAGS
                   value: "true"
                 - name: K6_DATADOG_ADDR
-                  value: "127.0.0.1:9125"
+                  value: "{{ .Values.datadogAddr }}"
                 - name: K6_OUT
                   value: datadog 
                 - name: REQ_PER_SECOND
