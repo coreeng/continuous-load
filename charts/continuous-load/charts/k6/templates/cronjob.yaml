@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: k6
     app.kubernetes.io/component: continuous-load
 spec:
-  schedule: "*/6 * * * *" # Every 6 minutes
+  schedule: "{{ .Values.schedule }}"
   successfulJobsHistoryLimit: 5
   failedJobsHistoryLimit: 5
   startingDeadlineSeconds: 60
@@ -31,7 +31,7 @@ spec:
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
-          activeDeadlineSeconds: 600 # job runs 7 min cleanup after 10 min
+          activeDeadlineSeconds: "{{ .Values.activeDeadlineSeconds }}"
           securityContext:
             fsGroup: 1000
             runAsGroup: 1000
