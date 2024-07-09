@@ -13,6 +13,12 @@ podinfo:
   replicaCount: "2"
 
 k6:
+
+  # -- Configure k6 container image
+  image:
+    repository: loadimpact/k6
+    tag: 0.32.0
+
   # -- Configure the target(s) of the continuous load
   loadTargetService:
   - method: GET

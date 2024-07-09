@@ -38,7 +38,7 @@ spec:
             runAsUser: 1000
           containers:
             - name: k6
-              image: loadimpact/k6:0.32.0
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               env:
                 - name: K6_STATSD_ENABLE_TAGS
                   value: "true"
