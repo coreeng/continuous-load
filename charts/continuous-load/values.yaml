@@ -38,8 +38,10 @@ k6:
   # -- The throughput required
   reqPerSecond: "3"
 
+  # -- Configure k6 datadog address
   datadogAddr: "127.0.0.1:9125"
 
+  # -- Configure prometheus statsd sidecar
   prometheusStatsd:
     enable: true
     image:
