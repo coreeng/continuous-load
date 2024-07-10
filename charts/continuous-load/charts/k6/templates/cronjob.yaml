@@ -31,7 +31,7 @@ spec:
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
-          activeDeadlineSeconds: "{{ .Values.activeDeadlineSeconds }}"
+          activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
           securityContext:
             fsGroup: 1000
             runAsGroup: 1000
