@@ -15,5 +15,5 @@ dependencies:
   version: "1.0.0"
   repository: "file://charts/k6"
 - name: podinfo
-  version: "6.4.0"
+  version: "6.7.0"
   repository: "https://stefanprodan.github.io/podinfo"
