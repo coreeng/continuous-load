@@ -25,6 +25,9 @@ k6:
     repository: loadimpact/k6
     tag: 0.32.0
 
+  # -- Configure common labels for k8s resources
+  commonLabels: {}
+
   # -- Configure additional tags for k6 metrics
   tags: {}
 
