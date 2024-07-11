@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: k6
     app.kubernetes.io/component: continuous-load
-    {{- .Values.commonLabels | nindent 4 }}
+    {{- .Values.commonLabels | toYaml | nindent 4 }}
 spec:
   schedule: "{{ .Values.schedule }}"
   successfulJobsHistoryLimit: 5
@@ -19,7 +19,7 @@ spec:
       labels:
         app.kubernetes.io/name: k6
         app.kubernetes.io/component: continuous-load
-        {{- .Values.commonLabels | nindent 8 }}
+        {{- .Values.commonLabels | toYaml | nindent 8 }}
     spec:
       completions: 2
       parallelism: 2
@@ -30,7 +30,7 @@ spec:
           labels:
             app.kubernetes.io/name: k6
             app.kubernetes.io/component: continuous-load
-            {{- .Values.commonLabels | nindent 12 }}
+            {{- .Values.commonLabels | toYaml | nindent 12 }}
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
