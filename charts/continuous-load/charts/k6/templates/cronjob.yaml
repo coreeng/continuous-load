@@ -45,10 +45,10 @@ spec:
               env:
                 - name: K6_STATSD_ENABLE_TAGS
                   value: "true"
-                - name: K6_DATADOG_ADDR
-                  value: "{{ .Values.datadogAddr }}"
+                - name: K6_STATSD_ADDR
+                  value: "{{ .Values.statsdAddr }}"
                 - name: K6_OUT
-                  value: datadog 
+                  value: statsd
                 - name: REQ_PER_SECOND
                   value: "{{ .Values.reqPerSecond }}"
                 - name: LOAD_TARGET_SERVICE

@@ -22,8 +22,8 @@ k6:
 
   # -- Configure k6 container image
   image:
-    repository: loadimpact/k6
-    tag: 0.32.0
+    repository: grafana/k6
+    tag: 0.52.0
 
   # -- Configure common labels for k8s resources
   commonLabels: {}
@@ -51,7 +51,7 @@ k6:
   reqPerSecond: "3"
 
   # -- Configure k6 datadog address
-  datadogAddr: "127.0.0.1:9125"
+  statsdAddr: "127.0.0.1:9125"
 
   # -- Configure prometheus statsd sidecar
   prometheusStatsd:
