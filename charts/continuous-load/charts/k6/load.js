@@ -5,12 +5,14 @@ import { Rate } from "k6/metrics";
 const TARGET_SERVICES = __ENV.LOAD_TARGET_SERVICE
 const REQ_PER_SECOND = __ENV.REQ_PER_SECOND || 3
 const THRESHOLDS = __ENV.THRESHOLDS || "[\"p(90) < 400\", \"p(95) < 800\", \"p(99.9) < 2000\"]"
+const TAGS = __ENV.TAGS || "{}"
 const SLEEP = __ENV.SLEEP || 1
 
 export let options = {
     insecureSkipTLSVerify: true,
     userAgent: 'MyK6UserAgentString/1.0',
     summaryTrendStats: ["min", "avg", "med", "p(10)", "p(80)", "p(95)", "p(99)", "p(99.9)", "max", "count"],
+    tags: JSON.parse(TAGS),
     thresholds: JSON.parse(THRESHOLDS),
     scenarios: {
       open_model: {

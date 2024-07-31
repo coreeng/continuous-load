@@ -6,7 +6,7 @@ metadata:
 data:
   load.js: |-
 {{ .Files.Get "load.js" | indent 6 }}
-
+{{ if .Values.prometheusStatsd.enable -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -34,3 +34,4 @@ data:
     # - match: "k6\\.([^$]*)"
     #   match_type: regex
     #   name: "k6_${1}"
+{{- end}}
