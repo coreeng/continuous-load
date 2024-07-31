@@ -25,6 +25,14 @@ k6:
     repository: grafana/k6
     tag: 0.52.0
 
+  # -- Configure k6 resource requests
+  resources:
+    limits:
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+
   # -- Configure common labels for k8s resources
   commonLabels: {}
 
@@ -59,3 +67,10 @@ k6:
     image:
       repository: prom/statsd-exporter
       tag: v0.20.0
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        memory: 50Mi

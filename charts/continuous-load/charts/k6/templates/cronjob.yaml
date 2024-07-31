@@ -6,7 +6,9 @@ metadata:
   labels:
     app.kubernetes.io/name: k6
     app.kubernetes.io/component: continuous-load
-    {{- .Values.commonLabels | toYaml | nindent 4 }}
+    {{- range $key, $value := .Values.commonLabels  }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   schedule: "{{ .Values.schedule }}"
   successfulJobsHistoryLimit: 5
@@ -19,7 +21,9 @@ spec:
       labels:
         app.kubernetes.io/name: k6
         app.kubernetes.io/component: continuous-load
-        {{- .Values.commonLabels | toYaml | nindent 8 }}
+        {{- range $key, $value := .Values.commonLabels  }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
     spec:
       completions: 2
       parallelism: 2
@@ -30,7 +34,9 @@ spec:
           labels:
             app.kubernetes.io/name: k6
             app.kubernetes.io/component: continuous-load
-            {{- .Values.commonLabels | toYaml | nindent 12 }}
+            {{- range $key, $value := .Values.commonLabels  }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
@@ -64,11 +70,7 @@ spec:
                     {{ .Values.tags | toJson }}
               command: [ "sh", "-c", "k6 run /scripts/load.js; exit_code=$?; echo exit_code is $exit_code; wget --post-data '' http://127.0.0.1:15020/quitquitquit || true; exit $exit_code;"]
               resources:
-                requests:
-                  cpu: 100m
-                  memory: 200Mi
-                limits:
-                  memory: 200Mi
+{{ .Values.resources | toYaml | indent 16 }}
               volumeMounts:
                 - name: scripts-vol
                   mountPath: /scripts
@@ -89,11 +91,7 @@ spec:
                 - --statsd.event-flush-interval=200ms
                 - --statsd.mapping-config=/etc/prometheus-statsd-exporter/statsd-mapping.conf
               resources:
-                requests:
-                  cpu: 100m
-                  memory: 50Mi
-                limits:
-                  memory: 50Mi
+{{ .Values.prometheusStatsd.resources | toYaml | indent 16 }}
               ports:
                 - name: http
                   containerPort: 9102
@@ -112,8 +110,6 @@ spec:
                 httpGet:
                   path: /metrics
                   port: http
-              resources:
-                {}
               volumeMounts:
                 - name: statsd-mapping-config
                   mountPath: /etc/prometheus-statsd-exporter
