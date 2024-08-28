@@ -31,3 +31,6 @@ k6:
 
   # -- The throughput required
   reqPerSecond: "3"
+
+  # -- Enables all logs for the level: debug, info, warn, error, critical.
+  logLevel: error
