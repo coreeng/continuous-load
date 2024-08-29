@@ -20,9 +20,11 @@ in charts/k6/load.js.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| dashboard.enabled | bool | `true` |  |
+| global.promOperator | string | `"coreos"` | Configure the Prometheus operator to use.  Valid values are "coreos", "googleapis", "none" |
+| grafanaInstanceLabel | string | `"grafana"` | Configure the grafana instance that the dashboard will be deploy to |
 | k6.loadTargetService | list | `[{"method":"GET","params":{"tags":{"type":"service"}},"url":"http://continuous-load-podinfo.continuous-load.svc.cluster.local:9898/status/200"}]` | Configure the target(s) of the continuous load |
 | k6.loadTargetService[0].params | object | `{"tags":{"type":"service"}}` | See https://k6.io/docs/javascript-api/k6-http/params/ for info on accepted parameters |
-| k6.logLevel | string | `"error"` | Enables all logs for the level: debug, info, warn, error, critical. |
 | k6.reqPerSecond | string | `"3"` | The throughput required |
 | k6.thresholds | object | `{"http_req_duration":["p(95)<200"],"http_req_failed":["rate<0.01"]}` | See https://k6.io/docs/using-k6/thresholds/ for info on thresholds for pass/failure. |
 | podinfo.replicaCount | string | `"2"` | Configure the number of replicas of the target service |
