@@ -13,6 +13,32 @@ podinfo:
   replicaCount: "2"
 
 k6:
+
+  # -- Configure k6 cron schedule
+  schedule: "*/6 * * * *"
+
+  # -- Configure k6 cronjob activeDeadlineSeconds
+  activeDeadlineSeconds: 600
+
+  # -- Configure k6 container image
+  image:
+    repository: grafana/k6
+    tag: 0.52.0
+
+  # -- Configure k6 resource requests
+  resources:
+    limits:
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+
+  # -- Configure common labels for k8s resources
+  commonLabels: {}
+
+  # -- Configure additional tags for k6 metrics
+  tags: {}
+
   # -- Configure the target(s) of the continuous load
   loadTargetService:
   - method: GET
@@ -32,4 +58,21 @@ k6:
   # -- The throughput required
   reqPerSecond: "3"
 
+  # -- Configure k6 datadog address
+  statsdAddr: "127.0.0.1:9125"
+
   additionalAntiAffinity:
+
+  # -- Configure prometheus statsd sidecar
+  prometheusStatsd:
+    enable: true
+    image:
+      repository: prom/statsd-exporter
+      tag: v0.20.0
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        memory: 50Mi
