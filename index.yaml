@@ -3,6 +3,25 @@ entries:
   continuous-load:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-12-05T11:58:09.1198975Z"
+    dependencies:
+    - name: k6
+      repository: file://charts/k6
+      version: 1.0.0
+    - name: podinfo
+      repository: https://stefanprodan.github.io/podinfo
+      version: 6.7.0
+    description: 'A Helm chart to run continuous load. This implementation uses the
+      podinfo application, which is able to generate metrics that are used in the
+      dashboard.  This implementation uses k6 to generate the load.  The parameters
+      are defined in charts/k6/load.js. '
+    digest: 619e11ab1ce40a039ba2c3f205104bedaac09a29f8f02a36228ccfa333e9bdbd
+    name: continuous-load
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/continuous-load-1.6.0/continuous-load-1.6.0.tgz
+    version: 1.6.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-08-24T09:59:21.070566752Z"
     dependencies:
     - name: k6
@@ -104,6 +123,22 @@ entries:
   monitoring:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-12-05T11:58:09.280903562Z"
+    dependencies:
+    - name: prometheus
+      repository: file://charts/prometheus
+      version: 1.0.0
+    - name: grafana
+      repository: file://charts/grafana
+      version: 1.0.0
+    description: A Helm chart to run the monitoring stack for continuous load
+    digest: b6c8a2a60003324703004f95a275e44faff3c9f7cd1b46ffca2aef608f550d4b
+    name: monitoring
+    urls:
+    - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.6.0/monitoring-1.6.0.tgz
+    version: 1.6.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-08-24T09:59:21.291268489Z"
     dependencies:
     - name: prometheus
@@ -184,4 +219,4 @@ entries:
     urls:
     - https://github.com/coreeng/continuous-load/releases/download/monitoring-1.0.0/monitoring-1.0.0.tgz
     version: 1.0.0
-generated: "2023-08-24T09:59:21.291324293Z"
+generated: "2024-12-05T11:58:09.280948336Z"
