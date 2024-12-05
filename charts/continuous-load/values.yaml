@@ -32,3 +32,5 @@ k6:
   # -- The throughput required
   reqPerSecond: "3"
 
+  additionalAntiAffinity:
+
