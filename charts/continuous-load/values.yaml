@@ -61,6 +61,8 @@ k6:
   # -- Configure k6 datadog address
   statsdAddr: "127.0.0.1:9125"
 
+  additionalAntiAffinity:
+
   # -- Configure prometheus statsd sidecar
   prometheusStatsd:
     enable: true

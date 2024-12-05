@@ -68,7 +68,7 @@ spec:
                 - name: TAGS
                   value: |
                     {{ .Values.tags | toJson }}
-              command: [ "sh", "-c", "k6 run /scripts/load.js; exit_code=$?; echo exit_code is $exit_code; wget --post-data '' http://127.0.0.1:15020/quitquitquit || true; exit $exit_code;"]
+              command: [ "sh", "-c", "k6 run -q /scripts/load.js; exit_code=$?; echo exit_code is $exit_code; wget --post-data '' http://127.0.0.1:15020/quitquitquit || true; exit $exit_code;"]
               resources:
 {{ .Values.resources | toYaml | indent 16 }}
               volumeMounts:
@@ -125,6 +125,15 @@ spec:
                         values:
                           - k6
                   topologyKey: kubernetes.io/hostname
+                {{- range .Values.additionalAntiAffinity }}
+                - labelSelector:
+                    matchExpressions:
+                      - key: {{ .label }}
+                        operator: In
+                        values:
+                          - {{ .value }}
+                  topologyKey: kubernetes.io/hostname
+                {{- end }}
           volumes:
             - name: scripts-vol
               configMap:
