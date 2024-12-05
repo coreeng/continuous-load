@@ -1,5 +1,5 @@
 apiVersion: v2
-version: 1.0.0
+version: 1.6.0
 appVersion: 1.0.0
 name: monitoring
 description: A Helm chart to run the monitoring stack for continuous load

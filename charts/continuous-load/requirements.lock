@@ -1,9 +1,0 @@
-dependencies:
-- name: k6
-  repository: file://charts/k6
-  version: 1.0.0
-- name: podinfo
-  repository: https://stefanprodan.github.io/podinfo
-  version: 6.4.0
-digest: sha256:3b936037d14b99882d324ca864938c5aeeb29f7ef2f45b52f2120855a9c36b80
-generated: "2023-07-12T15:12:47.652752+01:00"

@@ -121,6 +121,15 @@ spec:
                         values:
                           - k6
                   topologyKey: kubernetes.io/hostname
+                {{- range .Values.additionalAntiAffinity }}
+                - labelSelector:
+                    matchExpressions:
+                      - key: {{ .label }}
+                        operator: In
+                        values:
+                          - {{ .value }}
+                  topologyKey: kubernetes.io/hostname
+                {{- end }}
           volumes:
             - name: scripts-vol
               configMap:
